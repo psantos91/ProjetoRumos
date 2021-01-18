@@ -27,7 +27,7 @@ namespace Models
 
         [Required]
         [StringLength(20, MinimumLength = 2)]
-        [Display(Name = "Função Empregrado")]
+        [Display(Name = "Função Empregado")]
         public string FuncaoEmpregado { get; set; }
 
         [Required]

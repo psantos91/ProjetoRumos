@@ -132,6 +132,10 @@ namespace WebApplication2.Data
             modelBuilder.Entity<Categoria>().HasData(
                 new Categoria { CategoriaId = 1, Nome = "Frutas" },
                 new Categoria { CategoriaId = 2, Nome = "Legumes" });
+
+            //SEEDING DE FUNCIONARIOS
+            modelBuilder.Entity<Funcionario>().HasData(
+                new Funcionario { Id = 1, Nome = "Admin", Email = "admin@gmail.com", FuncaoEmpregado = "Administrador", NumeroDeTrabalhador = 1, Password = "admin123" });
         }
 
     }
