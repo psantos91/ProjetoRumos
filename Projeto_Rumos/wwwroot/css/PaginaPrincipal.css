@@ -64,6 +64,13 @@ header hr {
     margin-inline: 11px;
 }
 
+#Img-Produto {
+    position: relative;
+    margin-top: -19%;
+    width: 100%;
+    display: block;
+}
+
 #btn-users {
     float: right;
     background: none;

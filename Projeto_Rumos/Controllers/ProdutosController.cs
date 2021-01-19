@@ -28,7 +28,9 @@ namespace Projeto_Rumos.Controllers
         }
 
         // GET: Produtos
-        
+        // ACTION PARA SALVAR A IMAGEM QUE VAI SER ASSOCIADA AO PRODUTO, ESTA IMAGEM TEM QUE TER O MESMO NOME QUE SE DA A PROP DO PRODUTO "PHOTOFILENAME"
+        // RETORNA PARA A VIEW UMA VIEWBAG.MESSAGE COM NOME DO FICHEIRO PARA SER PREENCHIDA A MENSAGEM DE SUCESSO E PREENCHER O CAMPO "PHOTOFILENAME", CASO SE ESQUEÇAM QUE TEM QUE SER O NOME DO ARQUIVO DE IMAGEM
+
         [HttpPost]
         public async Task<IActionResult> SalvarImg(IFormFile ifile)
         {
@@ -63,8 +65,6 @@ namespace Projeto_Rumos.Controllers
         }
 
         // GET: Produtos/Details/5
-        
-
         public async Task<IActionResult> Details(int? id)
         {
             try
@@ -90,6 +90,8 @@ namespace Projeto_Rumos.Controllers
         }
 
         // GET: Produtos/Create
+        // retorna para a view um viewdata com as categorias, para ser preenchido um select com os nomes das categorias
+
         public IActionResult CreateProduto()
         {
             try
@@ -107,8 +109,10 @@ namespace Projeto_Rumos.Controllers
         }
 
         // POST: Produtos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Metodo para criar um novo produto da área de funcionario, "prop: photoFileName", é introduzida automaticamente no controller
+        // pois como é igual para todos os produtos, não é necessario escrever.
+        // retorna uma viewbag.message consoante se der correto ou não e passa essa message para a view.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string nome, string preco, string descricao, string photoFileName, int stock, Categoria categoria)
@@ -166,8 +170,8 @@ namespace Projeto_Rumos.Controllers
         }
 
         // POST: Produtos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // AACTION PARA EDITAR UM PRODUTO DA AREA DE GESTÁO DE PRODUTO
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string Preco, [Bind("ProdutoId,Nome,Descricao,PhotoFileName,ImageMimeType,Stock")] Produto produto)
@@ -261,11 +265,15 @@ namespace Projeto_Rumos.Controllers
                 return View("_Error", errorViewModel);
             }
         }
+
+        //ACTION PARA MOSTAR A LISTA DE PRODUTOS A SER GERIDA
+
         public async Task<IActionResult> ListaProdutosGestao()
         {
             return View(await _context.Produtos.ToListAsync());
         }
-        
+
+        //ACTION COM MENU PARA ESCOLHER CRIAR PRODUTO OU IR PARA VIEW "ListaProdutosGestao" PARA EDITAR OU REMOVER PRODUTO
         public IActionResult MenuGestaoProduto()
         {
             return View();

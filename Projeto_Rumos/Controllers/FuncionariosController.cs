@@ -21,18 +21,28 @@ namespace Projeto_Rumos.Controllers
         }
 
         // GET: Funcionarios
+        //MOSTRA A LISTA DE USUARIOS NA BASE DE DADOS
+
         public async Task<IActionResult> Index()
         {
             return View(await _context.Funcionarios.ToListAsync());
         }
+
+        //ACTION PARA A VIEW DE LOGIN DE FUNCIONARIO.
         public IActionResult LoginFuncionario()
         {
             return View();
         }
+
+        //ACTION PARA RETORNAR A VIR DE MENU GESTÃO
         public IActionResult MenuGestao()
         {
             return View();
         }
+
+        //ACTION PARA LOGIN DE FUNCIONARO, FAZ CONFIRMAÇÃO POR NOME, EMAIL E A PASSWORD
+        //SE ERRADO O LOGIN ENVIA PARA A VIEW UM VIEWBAG.MESSAGE, SE OK, FA UM REDIRECT PARA ACTION "MenuGestao"
+
         [HttpPost]
         [AutoValidateAntiforgeryToken]
         public IActionResult LoginFuncionario(string nome, string email, string password)

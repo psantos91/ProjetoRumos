@@ -129,6 +129,7 @@ namespace WebApplication2.Data
                 new Categoria { CategoriaId = 1, Nome = "Frutas" },
                 new Categoria { CategoriaId = 2, Nome = "Legumes" });
 
+            //SEEDING DE FUNCIONARIO PARA TESTES
             modelBuilder.Entity<Funcionario>().HasData(new Funcionario
             {
                 Id = 1,
