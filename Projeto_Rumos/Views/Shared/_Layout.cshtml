@@ -16,7 +16,7 @@
 <body>
     <header>
         @await Html.PartialAsync("_LoginPartial.cshtml")
-
+       
         <div class="container">
             <section id="icons-menu" class="pull-right">
                 @await Html.PartialAsync("_Search.cshtml")
@@ -75,6 +75,7 @@
 
     <div class="">
         <main role="main" class="pb-3">
+            @await Html.PartialAsync("_PopupPartialView.cshtml")
             @RenderBody()
         </main>
     </div>

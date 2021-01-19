@@ -287,8 +287,14 @@ footer hr {
     height: 200px;
     position: fixed;
     z-index: 10;
-    margin-top: -35%;
-    margin-inline: 40%;
+}
+#caixa {
+    display: none;
+}
+.flex-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #button {

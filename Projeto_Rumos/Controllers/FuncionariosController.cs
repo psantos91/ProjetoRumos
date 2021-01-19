@@ -20,6 +20,11 @@ namespace Projeto_Rumos.Controllers
             _context = context;
         }
 
+        // GET: Funcionarios
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.Funcionarios.ToListAsync());
+        }
         public IActionResult LoginFuncionario()
         {
             return View();
@@ -43,7 +48,8 @@ namespace Projeto_Rumos.Controllers
                 else if (Funcionario.Nome == nome && Funcionario.Email == email && Funcionario.Password == password)
                 {
                     return RedirectToAction(nameof(MenuGestao));
-                } else
+                }
+                else
                 {
                     return View();
                 }
@@ -56,11 +62,6 @@ namespace Projeto_Rumos.Controllers
 
                 return View("_Error", errorViewModel);
             }
-        }
-        // GET: Funcionarios
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Funcionarios.ToListAsync());
         }
 
         // GET: Funcionarios/Details/5
@@ -92,7 +93,7 @@ namespace Projeto_Rumos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Email,Password,FuncaoEmpregado,NumeroDeTrabalhador")] Funcionario funcionario)
+        public async Task<IActionResult> CreateFuncionario([Bind("Id,Nome,Email,Password,NumeroDeTrabalhador,Cargo")] Funcionario funcionario)
         {
             if (ModelState.IsValid)
             {
@@ -124,7 +125,7 @@ namespace Projeto_Rumos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Email,Password,FuncaoEmpregado,NumeroDeTrabalhador")] Funcionario funcionario)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Email,Password,NumeroDeTrabalhador,Cargo")] Funcionario funcionario)
         {
             if (id != funcionario.Id)
             {

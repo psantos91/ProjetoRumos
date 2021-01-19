@@ -119,6 +119,49 @@ namespace Projeto_Rumos.Controllers
             }
         }
 
+        public async Task<IActionResult> SearchDetails(int? id)
+        {
+            try
+            {
+                Produto produto = new Produto();
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                produto = await _dbContext.Produtos
+                    .FirstOrDefaultAsync(m => m.ProdutoId == id);
+
+                return View(produto);
+            }
+            catch (Exception msg)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel();
+                errorViewModel.RequestId = msg.Message;
+
+                return View("_Error", errorViewModel);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Procurar(string consulta)
+        {
+            try
+            {
+                var resultados = _dbContext.Produtos
+                        .FirstOrDefault(m => m.Nome == consulta);
+
+                return View("SearchDetails", resultados);
+            }
+            catch (Exception msg)
+            {
+                ErrorViewModel errorViewModel = new ErrorViewModel();
+                errorViewModel.RequestId = msg.Message;
+
+                return View("_Error", errorViewModel);
+            }
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

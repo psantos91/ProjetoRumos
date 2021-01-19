@@ -79,12 +79,14 @@ function runEffect(obj) {
     }
 
     // Run the effect
+    document.getElementById("caixa").style.display = "flex";
     $("#effect").show(selectedEffect, options, 500, callback);
 };
 
 //callback function to bring a hidden box back
 function callback() {
     setTimeout(function () {
+        document.getElementById("caixa").style.display = "none";
         $("#effect:visible").removeAttr("style").fadeOut();
     }, 2000);
 };

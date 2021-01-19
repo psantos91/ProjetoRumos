@@ -63,24 +63,7 @@ namespace Projeto_Rumos.Controllers
         }
 
         // GET: Produtos/Details/5
-        [HttpPost]
-        public IActionResult Procurar(string consulta)
-        {
-            try
-            {
-                var resultados = _context.Produtos
-                        .FirstOrDefault(m => m.Nome == consulta);
-
-                return View("Details", resultados);
-            }
-            catch (Exception msg)
-            {
-                ErrorViewModel errorViewModel = new ErrorViewModel();
-                errorViewModel.RequestId = msg.Message;
-
-                return View("_Error", errorViewModel);
-            }
-        }
+        
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -215,7 +198,7 @@ namespace Projeto_Rumos.Controllers
                             throw;
                         }
                     }
-                    return RedirectToAction(nameof(Produto));
+                    return RedirectToAction(nameof(ListaProdutosGestao));
                 }
                 return View(produto);
             }
@@ -266,7 +249,7 @@ namespace Projeto_Rumos.Controllers
                 var produto = await _context.Produtos.FindAsync(id);
                 _context.Produtos.Remove(produto);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Produto));
+                return RedirectToAction(nameof(ListaProdutosGestao));
             }
             catch (Exception msg)
             {
@@ -276,6 +259,11 @@ namespace Projeto_Rumos.Controllers
                 return View("_Error", errorViewModel);
             }
         }
+        public async Task<IActionResult> ListaProdutosGestao()
+        {
+            return View(await _context.Produtos.ToListAsync());
+        }
+        
         public IActionResult MenuGestaoProduto()
         {
             return View();

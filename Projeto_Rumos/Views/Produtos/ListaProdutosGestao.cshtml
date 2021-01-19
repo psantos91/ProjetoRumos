@@ -1,22 +1,7 @@
 ﻿@model IEnumerable<Models.Produto>
-
-
-@{
-    ViewData["Title"] = "Produtos";
-}
-
-<div class="" style="text-align: center;">
-    <p class="into" style="POSITION: absolute; z-index: 1; margin-left: 15%; font-size: 227%;">OS SEUS</p>
-    <p class="into" style="POSITION: relative; margin-top: 14%; z-index: 1; margin-left: 32%; font-size: 227%;">PRODUTOS</p>
-    <img src="~/img/Imagens_site/apple-recortada.png" alt="Alternate Text" style="
-                POSITION: RELATIVE;
-                MARGIN-TOP: -19%;
-                WIDTH: 100%;
-                display: block;" />
-</div>
-
-<br />
-<div class="box-wrap">
+    <div>
+        <a href="/Produtos/MenuGestaoProduto" type="button" class="btn btn-secondary">Voltar aos produtos</a>
+    </div>
     @foreach (var item in Model)
     {
         <div class="col-xl-4 box" style="width:26%;">
@@ -27,12 +12,12 @@
                         <h4 class="card-title">@item.Nome</h4>
                         <p class="card-text" style="font-size: xx-large; font-style: italic; text-shadow: 1px 4px 7px #000000;">@item.Preco € KG</p>
                         <p style="color: black;font-size: 16px;text-shadow: 1px 4px 7px #000000">@item.Descricao</p>
+                        <p style="color: black;font-size: 16px;text-shadow: 1px 4px 7px #000000">@item.Stock</p>
                         <br />
-                        <button type="button" class="btn btn-primary fa fa-shopping-cart" onclick="encomendar(@item.ProdutoId)"> Adicionar</button>
+                        <a asp-action="Edit" asp-route-id="@item.ProdutoId">Edit</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ProdutoId">Delete</a>
                     </form>
                 </div>
             </div>
         </div>
     }
-</div>
-<hr />
