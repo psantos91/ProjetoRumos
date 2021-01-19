@@ -41,15 +41,15 @@ namespace Projeto_Rumos.Controllers
                     var stream = new FileStream(saveimg, FileMode.Create);
                     await ifile.CopyToAsync(stream);
                     string nomeProduto = ifile.FileName;
-                    ViewBag.Message = "Imagem carregada: " + nomeProduto;
+                    ViewBag.Message = nomeProduto;
                     ViewData["IdCategoria"] = new SelectList(_context.Categorias, "Nome", "Nome");
-                    return View("Create");
+                    return View("CreateProduto");
                 }
                 else
                 {
                     ViewBag.Message = "Erro!! Carregue uma imagem válida";
                     ViewData["IdCategoria"] = new SelectList(_context.Categorias, "Nome", "Nome");
-                    return View("Create");
+                    return View("CreateProduto");
                 }
             }
             catch (Exception msg)
@@ -115,9 +115,8 @@ namespace Projeto_Rumos.Controllers
         {
             try
             {
-                var precoCorreto = float.Parse(preco, CultureInfo.InvariantCulture.NumberFormat);
-
-                var produto = new Produto { Nome = nome, Preco = precoCorreto, Descricao = descricao, PhotoFileName = photoFileName, ImageMimeType = "image/jpeg", Stock = stock, IdCategoria = categoria.CategoriaId };
+                var Preco = float.Parse(preco, CultureInfo.InvariantCulture.NumberFormat);
+                var produto = new Produto { Nome = nome, Preco = Preco, Descricao = descricao, PhotoFileName = photoFileName, ImageMimeType = "image/jpeg", Stock = stock, Categoria = categoria };
 
                 if (ModelState.IsValid)
                 {
@@ -125,7 +124,7 @@ namespace Projeto_Rumos.Controllers
                     await _context.SaveChangesAsync();
 
                     ViewBag.Message2 = "Produto adicionado com sucesso";
-                    return View();
+                    return View("CreateProduto");
                 }
 
                 
@@ -171,10 +170,13 @@ namespace Projeto_Rumos.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProdutoId,Nome,Preco,Descricao,PhotoFileName,ImageMimeType,Stock")] Produto produto)
+        public async Task<IActionResult> Edit(int id, string Preco, [Bind("ProdutoId,Nome,Descricao,PhotoFileName,ImageMimeType,Stock")] Produto produto)
         {
             try
             {
+                var preco = float.Parse(Preco, CultureInfo.InvariantCulture.NumberFormat);
+                produto.Preco = preco;
+
                 if (id != produto.ProdutoId)
                 {
                     return NotFound();

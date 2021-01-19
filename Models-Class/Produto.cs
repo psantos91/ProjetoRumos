@@ -26,6 +26,7 @@ namespace Models
         public string PhotoFileName { get; set; }
         public string ImageMimeType { get; set; }
         [Required]
+        [DisplayName("Stock")]
         public int Stock { get; set; }
 
         [ForeignKey("CarrinhoCompra")]

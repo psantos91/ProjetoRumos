@@ -36,6 +36,13 @@ namespace Projeto_Rumos.Controllers
                     var prod = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == id);
                     var exist = _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).Where(x => x.ProdutoId == prod.ProdutoId && x.UsuarioId == Guid.Parse(user.Id)).Any();
 
+                    var NovoStockProduto = prod.Stock - 1;
+                    Produto produtoActualizado = prod;
+                    produtoActualizado.Stock = NovoStockProduto;
+
+                    _dbContext.Update(produtoActualizado);
+                    _dbContext.SaveChanges();
+
                     if (exist == false)
                     {
                         carrinhoCompra.ProdutoId = prod.ProdutoId;
@@ -117,6 +124,15 @@ namespace Projeto_Rumos.Controllers
             {
                 var produto = await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).FirstOrDefaultAsync(p => p.ProdutoId == id);
                 _dbContext.CarrinhoCompras.Remove(produto);
+
+                var prod = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+                var NovoStockProduto = prod.Stock + 1;
+                Produto produtoActualizado = prod;
+                produtoActualizado.Stock = NovoStockProduto;
+
+                _dbContext.Update(produtoActualizado);
+                _dbContext.SaveChanges();
+
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Carrinho));
             }

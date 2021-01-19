@@ -12,7 +12,7 @@
                         <h4 class="card-title">@item.Nome</h4>
                         <p class="card-text" style="font-size: xx-large; font-style: italic; text-shadow: 1px 4px 7px #000000;">@item.Preco € KG</p>
                         <p style="color: black;font-size: 16px;text-shadow: 1px 4px 7px #000000">@item.Descricao</p>
-                        <p style="color: black;font-size: 16px;text-shadow: 1px 4px 7px #000000">@item.Stock</p>
+                        <p style="color: black;font-size: 16px;text-shadow: 1px 4px 7px #000000">Stock: @item.Stock</p>
                         <br />
                         <a asp-action="Edit" asp-route-id="@item.ProdutoId">Edit</a> |
                         <a asp-action="Delete" asp-route-id="@item.ProdutoId">Delete</a>
