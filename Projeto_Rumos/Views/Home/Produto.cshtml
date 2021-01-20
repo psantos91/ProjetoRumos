@@ -13,7 +13,7 @@
     @*casa box vai ter um botão associado ao id do produto que ao clicar chama a função encomendar no ficheiro LOGIN.JS*@
     @foreach (var item in Model)
     {
-        <div class="col-xl-4 box" style="width:26%;">
+        <div id="tamanhoCartaoProduto" class="col-xl-4 box">
             <div class="card" style="border: none;text-align: center">
                 <img class="card-img-top" src="@Url.Action("GetImage", "Home", new { ProdutoId = item.ProdutoId })" alt="Card image cap" style="width: 70%;align-self: center;">
                 <div class="card-body">
