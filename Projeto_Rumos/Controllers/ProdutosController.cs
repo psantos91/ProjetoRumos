@@ -43,7 +43,7 @@ namespace Projeto_Rumos.Controllers
                     var stream = new FileStream(saveimg, FileMode.Create);
                     await ifile.CopyToAsync(stream);
                     string nomeProduto = ifile.FileName;
-                    ViewBag.Message = nomeProduto;
+                    ViewBag.Message = "Imagem Carregada: " + nomeProduto;
                     ViewData["IdCategoria"] = new SelectList(_context.Categorias, "Nome", "Nome");
                     return View("CreateProduto");
                 }

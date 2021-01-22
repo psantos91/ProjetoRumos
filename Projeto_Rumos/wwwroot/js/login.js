@@ -48,7 +48,7 @@ function encomendar(id) {
             method: "POST",
             body: JSON.stringify(id)
         }
-    ) 
+    )
         .then(resposta => resposta.json()) // Esta instrução dá erro se a resposta do server não for json
         .then(dados => apresentar(dados));
 }
@@ -97,6 +97,5 @@ function callback() {
 
 //serve para deixar a div escondida até ser chamada a função e aplicada o estilo para SHOW
 $("#effect").hide();
-
 
 
