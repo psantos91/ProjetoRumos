@@ -571,6 +571,26 @@ namespace Projeto_Rumos.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "19b13677-dced-4c06-9855-bd4c212bd270",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "c7e69114-4187-487d-a52e-e59c70720231",
+                            DateOfBirth = new DateTime(2021, 1, 22, 19, 42, 12, 121, DateTimeKind.Local).AddTicks(4450),
+                            Email = "admim@gmail.com",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PasswordHash = "Joao.12",
+                            PhoneNumber = "9185552522",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "4120fc68-84c8-4a20-bd00-4da9610c4874",
+                            SobreNome = "admim",
+                            StreetAddress = "avenida",
+                            TwoFactorEnabled = false,
+                            UserName = "admim"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

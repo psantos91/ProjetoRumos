@@ -24,7 +24,7 @@ namespace WebApplication2.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Pagamento> Pagamentos { get; set; }
         public DbSet<Funcionario> Funcionarios { get; set; }
-       
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -123,7 +123,7 @@ namespace WebApplication2.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<EncomendaProduto>().HasKey(ep => new { ep.EncomendaId, ep.ProdutoId });
 
-          
+
             //SEEDING DE CATEGORIAS
             modelBuilder.Entity<Categoria>().HasData(
                 new Categoria { CategoriaId = 1, Nome = "Frutas" },
@@ -139,6 +139,17 @@ namespace WebApplication2.Data
                 NumeroDeTrabalhador = 156,
                 Cargo = EnumCargo.Administrador,
             });
+
+            //modelBuilder.Entity<ApplicationUser>().HasData(new ApplicationUser
+            //{
+            //    Email = "admim@gmail.com",
+            //    UserName = "admim",
+            //    SobreNome = "admim",
+            //    StreetAddress = "avenida",
+            //    DateOfBirth = DateTime.Now,
+            //    PhoneNumber = "9185552522",
+            //    PasswordHash = "Joao.12",
+            //});
         }
     }
 }

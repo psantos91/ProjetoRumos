@@ -271,13 +271,13 @@ section .btn {
     .menu_gestao img {
         transition: all .5s;
         border: 10px solid transparent;
-        width: 100%;
+        width: 70%;
     }
 
         .menu_gestao img:hover {
             border: 10px solid #136497;
             border-radius: 50%;
-            width: 100%;
+            width: 80%;
         }
 
 #centrar-popup {
