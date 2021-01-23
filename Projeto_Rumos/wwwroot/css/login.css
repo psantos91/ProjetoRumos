@@ -29,12 +29,12 @@
         z-index:11;
     }
 
-    section #hr-menu-log {
-        margin-top: -48px;
-        margin-bottom: 45px;
-        width: -webkit-fill-available;
-        border-bottom: black 2px solid;
-    }
+section #hr-menu-log {
+    margin-top: 32px;
+    margin-bottom: 45px;
+    width: -webkit-fill-available;
+    border-bottom: black 2px solid;
+}
 
     section .area-login {
         margin-top: -30px;

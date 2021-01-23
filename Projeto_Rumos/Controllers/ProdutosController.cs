@@ -272,6 +272,12 @@ namespace Projeto_Rumos.Controllers
         {
             return View(await _context.Produtos.ToListAsync());
         }
+        
+        public async Task<IActionResult> GestaoProduto()
+        {
+            return View(await _context.Produtos.ToListAsync());
+        }
+        
 
         //ACTION COM MENU PARA ESCOLHER CRIAR PRODUTO OU IR PARA VIEW "ListaProdutosGestao" PARA EDITAR OU REMOVER PRODUTO
         public IActionResult MenuGestaoProduto()
