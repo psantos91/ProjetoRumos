@@ -24,6 +24,7 @@ namespace WebApplication2.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Pagamento> Pagamentos { get; set; }
         public DbSet<Funcionario> Funcionarios { get; set; }
+        public DbSet<Contacto> Contactos { get; set; }
 
 
 
