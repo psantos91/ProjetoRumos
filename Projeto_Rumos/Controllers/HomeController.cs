@@ -143,7 +143,7 @@ namespace Projeto_Rumos.Controllers
             {
                 _dbContext.Add(contacto);
                 await _dbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
 
             return View(contacto);
