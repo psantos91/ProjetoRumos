@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Projeto_Rumos.Models;
 using WebApplication2.Data;
 using Microsoft.EntityFrameworkCore;
+using Models_Class;
 
 namespace Projeto_Rumos.Controllers
 {
@@ -28,6 +29,14 @@ namespace Projeto_Rumos.Controllers
             _dbContext = dbContext;
             _environment = environment;
         }
+
+        //TESTE COM APPLICATIONDBCONTEXT PARA FORMULARIO DE CONTACTO
+        //private readonly ApplicationDbContext _context;
+
+        //public HomeController(ApplicationDbContext context)
+        //{
+        //    _context = context;
+        //}
 
         public IActionResult Index()
         {
@@ -107,6 +116,8 @@ namespace Projeto_Rumos.Controllers
             }
         }
 
+
+
         // RETORNA A VIEW CONTACTO
         public IActionResult Contacto()
         {
@@ -122,6 +133,22 @@ namespace Projeto_Rumos.Controllers
                 return View("_Error", errorViewModel);
             }
         }
+
+        //POST: HOME/CONTACTO
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Contacto([Bind("ContactoId,Nome,Email,ContactoTelefonico,Mensagem")] Contacto contacto)
+        {
+            if (ModelState.IsValid)
+            {
+                _dbContext.Add(contacto);
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(contacto);
+        }
+
 
         // ACTION PARA MOSTRAR O DETALHE DO ARTIGO PROCURA PELA "LUPA"
         public async Task<IActionResult> SearchDetails(int? id)
