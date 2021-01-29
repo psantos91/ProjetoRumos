@@ -32,53 +32,52 @@ namespace Projeto_Rumos.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] int id)
         {
-            if (User.Identity.IsAuthenticated)
+
+            //var user = _user;
+            try
             {
-                var user = _user;
-                try
-                {
-                    var prod = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-                    var exist = _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).Where(x => x.ProdutoId == prod.ProdutoId && x.UsuarioId == Guid.Parse(user.Id)).Any();
+                var prod = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == id);
+                //var exist = _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).Where(x => x.ProdutoId == prod.ProdutoId && x.UsuarioId == Guid.Parse(user.Id)).Any();
 
-                    //ESTE CODIGO É PARA REMOVER UNIDADE DO STOCK
-                    //--------------------------------------------
-                    var NovoStockProduto = prod.Stock - 1;
-                    Produto produtoActualizado = prod;
-                    produtoActualizado.Stock = NovoStockProduto;
+                //ESTE CODIGO É PARA REMOVER UNIDADE DO STOCK
+                //--------------------------------------------
+                var NovoStockProduto = prod.Stock - 1;
+                Produto produtoActualizado = prod;
+                produtoActualizado.Stock = NovoStockProduto;
 
-                    _dbContext.Update(produtoActualizado);
-                    _dbContext.SaveChanges();
-                    //--------------------------------------------
+                _dbContext.Update(produtoActualizado);
+                _dbContext.SaveChanges();
+                //--------------------------------------------
 
-                    if (exist == false)
-                    {
-                        carrinhoCompra.ProdutoId = prod.ProdutoId;
-                        carrinhoCompra.UsuarioId = Guid.Parse(user.Id);
+                //if (exist == false)
+                //{
+                carrinhoCompra.Produto = prod;
+                //carrinhoCompra.UsuarioId = Guid.Parse(user.Id);
 
-                        _dbContext.Add(carrinhoCompra);
-                        _dbContext.SaveChanges();
+                _dbContext.Add(carrinhoCompra);
+                _dbContext.SaveChanges();
 
-                        var sucesso = new { Sucesso = true, };
-                        return Json(sucesso);
-                    }
-                    else
-                    {
-                        var sucesso = new { Sucesso = false };
-                        return Json(sucesso);
-                    }
-                }
-                catch
-                {
-                    var necLogin = new { necLogin = "necessarioLogin" };
-                    return Json(necLogin);
-                }
+                var sucesso = new { Sucesso = true, };
+                return Json(sucesso);
+                //}
+                //else
+                //{
+                //    var sucesso = new { Sucesso = false };
+                //    return Json(sucesso);
+                //}
             }
-            else
+            catch (Exception msg)
             {
-                var necLogin = new { necLogin = true };
+                var necLogin = new { necLogin = msg.Message };
                 return Json(necLogin);
             }
         }
+        //else
+        //{
+        //    var necLogin = new { necLogin = true };
+        //    return Json(necLogin);
+
+
 
         // ACTION PARA CONSULTAR O DETALHE DOS ARTIGOS ADICIONADOS AO CARRINHO DE COMPRAS
 
@@ -169,19 +168,9 @@ namespace Projeto_Rumos.Controllers
         {
             try
             {
-                if (User.Identity.IsAuthenticated)
-                {
-                    var user = _user;
-                    return View(await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).Where(x => x.UsuarioId == Guid.Parse(user.Id)).ToListAsync());
-                }
-                else
-                {
-                    ErrorViewModel errorViewModel = new ErrorViewModel();
-                    errorViewModel.RequestId = "Necessário Login";
-
-                    return View("_Error", errorViewModel);
-                }
-
+                //var user = _user;
+                //return View(await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).Where(x => x.UsuarioId == Guid.Parse(user.Id)).ToListAsync());
+                return View(await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).ToListAsync());
             }
             catch (Exception msg)
             {

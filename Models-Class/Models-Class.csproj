@@ -6,4 +6,8 @@
     <UserSecretsId>0678e49f-f08c-4abd-8e71-0a3389cbdc67</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
+  </ItemGroup>
+
 </Project>

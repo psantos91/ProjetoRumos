@@ -20,10 +20,10 @@ namespace Projeto_Rumos.Controllers
         private readonly ILogger<HomeController> _logger;
         private ApplicationDbContext _dbContext;
         [Obsolete]
-        private IHostingEnvironment _environment;
+        private IWebHostEnvironment _environment;
 
         [Obsolete]
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext dbContext, IHostingEnvironment environment)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext dbContext, IWebHostEnvironment environment)
         {
             _logger = logger;
             _dbContext = dbContext;
@@ -82,39 +82,39 @@ namespace Projeto_Rumos.Controllers
 
         //ACTION PARA IR BUSCAR A IMAGEM E ASSOCIAR AO PRODUTO
         //NÃO RETORNA VIEW A NÃO SER QUE DE ERRO
-        [Obsolete]
-        public IActionResult GetImage(int produtoId)
-        {
-            try
-            {
-                Produto requestedPhoto = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == produtoId);
-                if (requestedPhoto != null)
-                {
-                    string webRootpath = _environment.WebRootPath;
-                    string folderPath = "\\img\\images_produtos\\";
-                    string fullPath = webRootpath + folderPath + requestedPhoto.PhotoFileName;
+        //[Obsolete]
+        //public IActionResult GetImage(int produtoId)
+        //{
+        //    try
+        //    {
+        //        Produto requestedPhoto = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == produtoId);
+        //        if (requestedPhoto != null)
+        //        {
+        //            string webRootpath = _environment.WebRootPath;
+        //            string folderPath = "\\img\\images_produtos\\";
+        //            string fullPath = webRootpath + folderPath + requestedPhoto.PhotoFileName;
 
-                    FileStream fileOnDisk = new FileStream(fullPath, FileMode.Open);
-                    byte[] fileBytes;
-                    using (BinaryReader br = new BinaryReader(fileOnDisk))
-                    {
-                        fileBytes = br.ReadBytes((int)fileOnDisk.Length);
-                    }
-                    return File(fileBytes, requestedPhoto.ImageMimeType);
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception msg)
-            {
-                ErrorViewModel errorViewModel = new ErrorViewModel();
-                errorViewModel.RequestId = msg.Message;
+        //            FileStream fileOnDisk = new FileStream(fullPath, FileMode.Open);
+        //            byte[] fileBytes;
+        //            using (BinaryReader br = new BinaryReader(fileOnDisk))
+        //            {
+        //                fileBytes = br.ReadBytes((int)fileOnDisk.Length);
+        //            }
+        //            return File(fileBytes, requestedPhoto.ImageMimeType);
+        //        }
+        //        else
+        //        {
+        //            return NotFound();
+        //        }
+        //    }
+        //    catch (Exception msg)
+        //    {
+        //        ErrorViewModel errorViewModel = new ErrorViewModel();
+        //        errorViewModel.RequestId = msg.Message;
 
-                return View("_Error", errorViewModel);
-            }
-        }
+        //        return View("_Error", errorViewModel);
+        //    }
+        //}
 
 
 

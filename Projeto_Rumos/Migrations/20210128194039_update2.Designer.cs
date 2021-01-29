@@ -10,8 +10,8 @@ using WebApplication2.Data;
 namespace Projeto_Rumos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210119130551_Initial")]
-    partial class Initial
+    [Migration("20210128194039_update2")]
+    partial class update2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -266,11 +266,6 @@ namespace Projeto_Rumos.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FuncaoEmpregado")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -287,6 +282,17 @@ namespace Projeto_Rumos.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Funcionarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Cargo = 3,
+                            Email = "admin@gmail.com",
+                            Nome = "Admin",
+                            NumeroDeTrabalhador = 156,
+                            Password = "12345"
+                        });
                 });
 
             modelBuilder.Entity("Models.Produto", b =>
@@ -306,8 +312,14 @@ namespace Projeto_Rumos.Migrations
                     b.Property<int?>("IdCategoria")
                         .HasColumnType("int");
 
+                    b.Property<int>("IdImagem")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageMimeType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ImagemProdutoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -327,6 +339,8 @@ namespace Projeto_Rumos.Migrations
 
                     b.HasIndex("IdCategoria");
 
+                    b.HasIndex("ImagemProdutoId");
+
                     b.ToTable("Produtos");
 
                     b.HasData(
@@ -336,6 +350,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "Banana importada da Colombia.",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Banana",
                             PhotoFileName = "banana1.jpg",
@@ -348,6 +363,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "Clementina natural de Portugal",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Clementina",
                             PhotoFileName = "clementina.jpg",
@@ -360,6 +376,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "Maça fuji, importada",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Maça Fuji",
                             PhotoFileName = "fuji.jpg",
@@ -372,6 +389,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "Kiwi, directamente da nossa quinta",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Kiwi",
                             PhotoFileName = "kiwi.jpg",
@@ -384,6 +402,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "O melhor limão de Portugal",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Limão",
                             PhotoFileName = "limao-siciliano.jpg",
@@ -396,6 +415,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "O melhor melão. Importado do Brasil",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Melão",
                             PhotoFileName = "melao.jpg",
@@ -408,6 +428,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "Pera natural, diretamente da nossa quinta",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Peras",
                             PhotoFileName = "peras.jpg",
@@ -420,6 +441,7 @@ namespace Projeto_Rumos.Migrations
                             CarrinhoId = 0,
                             Descricao = "Uva do Alentejo",
                             IdCategoria = 1,
+                            IdImagem = 0,
                             ImageMimeType = "image/jpeg",
                             Nome = "Uva",
                             PhotoFileName = "uvas.jpg",
@@ -466,6 +488,55 @@ namespace Projeto_Rumos.Migrations
                     b.HasKey("UsuarioId");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("Models_Class.Contacto", b =>
+                {
+                    b.Property<int>("ContactoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ContactoTelefonico")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ContactoId");
+
+                    b.ToTable("Contactos");
+                });
+
+            modelBuilder.Entity("Models_Class.Imagem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Dados")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Nome")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Imagens");
                 });
 
             modelBuilder.Entity("Models_Class.Pagamento", b =>
@@ -677,7 +748,13 @@ namespace Projeto_Rumos.Migrations
                         .WithMany("Produtos")
                         .HasForeignKey("IdCategoria");
 
+                    b.HasOne("Models_Class.Imagem", "ImagemProduto")
+                        .WithMany()
+                        .HasForeignKey("ImagemProdutoId");
+
                     b.Navigation("Categoria");
+
+                    b.Navigation("ImagemProduto");
                 });
 
             modelBuilder.Entity("Models_Class.Pagamento", b =>

@@ -161,6 +161,9 @@ namespace Projeto_Rumos.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<int?>("EncomendaId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProdutoId")
                         .HasColumnType("int");
 
@@ -171,6 +174,8 @@ namespace Projeto_Rumos.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CarrinhoId");
+
+                    b.HasIndex("EncomendaId");
 
                     b.HasIndex("ProdutoId")
                         .IsUnique();
@@ -217,15 +222,10 @@ namespace Projeto_Rumos.Migrations
                     b.Property<int>("Estado")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdCarrinhoCompra")
-                        .HasColumnType("int");
-
                     b.Property<int?>("IdUsuario")
                         .HasColumnType("int");
 
                     b.HasKey("EncomendaId");
-
-                    b.HasIndex("IdCarrinhoCompra");
 
                     b.HasIndex("IdUsuario");
 
@@ -327,6 +327,10 @@ namespace Projeto_Rumos.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ProdutoId");
 
                     b.HasIndex("IdCategoria");
@@ -344,7 +348,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Banana",
                             PhotoFileName = "banana1.jpg",
                             Preco = 0.99f,
-                            Stock = 10
+                            Stock = 10,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/banana1.jpg"
                         },
                         new
                         {
@@ -356,7 +361,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Clementina",
                             PhotoFileName = "clementina.jpg",
                             Preco = 0.79f,
-                            Stock = 100
+                            Stock = 100,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/clementina.jpg"
                         },
                         new
                         {
@@ -368,7 +374,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Maça Fuji",
                             PhotoFileName = "fuji.jpg",
                             Preco = 0.59f,
-                            Stock = 150
+                            Stock = 150,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/fuji.jpg"
                         },
                         new
                         {
@@ -380,7 +387,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Kiwi",
                             PhotoFileName = "kiwi.jpg",
                             Preco = 3.99f,
-                            Stock = 300
+                            Stock = 300,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/kiwi.jpg"
                         },
                         new
                         {
@@ -392,7 +400,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Limão",
                             PhotoFileName = "limao-siciliano.jpg",
                             Preco = 0.99f,
-                            Stock = 150
+                            Stock = 150,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/limao-siciliano.jpg"
                         },
                         new
                         {
@@ -404,7 +413,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Melão",
                             PhotoFileName = "melao.jpg",
                             Preco = 1.99f,
-                            Stock = 200
+                            Stock = 200,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/melao.jpg"
                         },
                         new
                         {
@@ -416,7 +426,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Peras",
                             PhotoFileName = "peras.jpg",
                             Preco = 0.99f,
-                            Stock = 200
+                            Stock = 200,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/peras.jpg"
                         },
                         new
                         {
@@ -428,7 +439,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Uva",
                             PhotoFileName = "uvas.jpg",
                             Preco = 1.29f,
-                            Stock = 300
+                            Stock = 300,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/uvas.jpg"
                         });
                 });
 
@@ -654,6 +666,10 @@ namespace Projeto_Rumos.Migrations
 
             modelBuilder.Entity("Models.CarrinhoCompra", b =>
                 {
+                    b.HasOne("Models.Encomenda", null)
+                        .WithMany("CarrinhoCompras")
+                        .HasForeignKey("EncomendaId");
+
                     b.HasOne("Models.Produto", "Produto")
                         .WithOne("Carrinho")
                         .HasForeignKey("Models.CarrinhoCompra", "ProdutoId")
@@ -671,15 +687,9 @@ namespace Projeto_Rumos.Migrations
 
             modelBuilder.Entity("Models.Encomenda", b =>
                 {
-                    b.HasOne("Models.CarrinhoCompra", "CarrinhoCompra")
-                        .WithMany()
-                        .HasForeignKey("IdCarrinhoCompra");
-
                     b.HasOne("Models.Usuario", "Usuario")
                         .WithMany("Encomendas")
                         .HasForeignKey("IdUsuario");
-
-                    b.Navigation("CarrinhoCompra");
 
                     b.Navigation("Usuario");
                 });
@@ -746,6 +756,8 @@ namespace Projeto_Rumos.Migrations
 
             modelBuilder.Entity("Models.Encomenda", b =>
                 {
+                    b.Navigation("CarrinhoCompras");
+
                     b.Navigation("EncomendaProdutos");
                 });
 

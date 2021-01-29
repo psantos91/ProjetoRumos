@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models_Class;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -36,6 +37,9 @@ namespace Models
         [ForeignKey("Categoria")]
         public int? IdCategoria { get; set; }
         public Categoria Categoria { get; set; }
+
+        [Required]
+        public string Url { get; set; }
 
         public ICollection<EncomendaProduto> EncomendaProdutos { get; set; }
     }

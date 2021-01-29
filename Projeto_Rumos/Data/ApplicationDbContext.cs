@@ -27,7 +27,6 @@ namespace WebApplication2.Data
         public DbSet<Contacto> Contactos { get; set; }
 
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //SEEDING DE PRODUTOS
@@ -41,7 +40,9 @@ namespace WebApplication2.Data
                     PhotoFileName = "banana1.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 10,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/banana1.jpg"
+
                 },
                 new Produto
                 {
@@ -52,7 +53,8 @@ namespace WebApplication2.Data
                     PhotoFileName = "clementina.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 100,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/clementina.jpg"
                 },
                 new Produto
                 {
@@ -63,7 +65,8 @@ namespace WebApplication2.Data
                     PhotoFileName = "fuji.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 150,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/fuji.jpg"
                 },
                 new Produto
                 {
@@ -74,7 +77,8 @@ namespace WebApplication2.Data
                     PhotoFileName = "kiwi.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 300,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/kiwi.jpg"
                 },
                 new Produto
                 {
@@ -85,7 +89,8 @@ namespace WebApplication2.Data
                     PhotoFileName = "limao-siciliano.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 150,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/limao-siciliano.jpg"
                 },
                 new Produto
                 {
@@ -96,7 +101,8 @@ namespace WebApplication2.Data
                     PhotoFileName = "melao.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 200,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/melao.jpg"
                 },
                 new Produto
                 {
@@ -107,7 +113,8 @@ namespace WebApplication2.Data
                     PhotoFileName = "peras.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 200,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/peras.jpg"
                 },
                 new Produto
                 {
@@ -118,7 +125,8 @@ namespace WebApplication2.Data
                     PhotoFileName = "uvas.jpg",
                     ImageMimeType = "image/jpeg",
                     Stock = 300,
-                    IdCategoria = 1
+                    IdCategoria = 1,
+                    Url = "https://ac2020storage.blob.core.windows.net/joaomachado/uvas.jpg"
                 });
 
             base.OnModelCreating(modelBuilder);

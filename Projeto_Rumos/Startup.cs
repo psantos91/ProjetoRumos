@@ -42,6 +42,7 @@ namespace Projeto_Rumos
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<AuthenticatedUser>();
+            services.AddScoped<DadosJoaoStorage>();
 
             //AUTENTICAÇÃO GOOGLE
             services.AddAuthentication()

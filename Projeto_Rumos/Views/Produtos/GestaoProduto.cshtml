@@ -34,7 +34,7 @@
             {
                 <tr id="linha-produto">
                     <td id="tabelaDeImg">
-                        <img id="img-produto" class="card-img-top" src="@Url.Action("GetImage", "Home", new { ProdutoId = item.ProdutoId })" alt="Card image cap" />
+                        <img id="img-produto" class="card-img-top" src="@item.Url" alt="Card image cap" />
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Nome)

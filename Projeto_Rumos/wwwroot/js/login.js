@@ -81,7 +81,7 @@ function runEffect(obj) {
     }
 
     //coloca um estilo a div #caixa(_PopupPartialView.cshtml)
-    document.getElementById("caixa-popup").style.display = "flex";
+    document.getElementById("caixa-popup").style.display = "block";
     // Run the effect
     $("#effect").show(selectedEffect, options, 500, callback);
 };

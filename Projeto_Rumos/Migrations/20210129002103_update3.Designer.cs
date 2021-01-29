@@ -10,8 +10,8 @@ using WebApplication2.Data;
 namespace Projeto_Rumos.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210119134126_seedFuncionario2")]
-    partial class seedFuncionario2
+    [Migration("20210129002103_update3")]
+    partial class update3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -329,6 +329,10 @@ namespace Projeto_Rumos.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ProdutoId");
 
                     b.HasIndex("IdCategoria");
@@ -346,7 +350,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Banana",
                             PhotoFileName = "banana1.jpg",
                             Preco = 0.99f,
-                            Stock = 10
+                            Stock = 10,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/banana1.jpg"
                         },
                         new
                         {
@@ -358,7 +363,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Clementina",
                             PhotoFileName = "clementina.jpg",
                             Preco = 0.79f,
-                            Stock = 100
+                            Stock = 100,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/clementina.jpg"
                         },
                         new
                         {
@@ -370,7 +376,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Maça Fuji",
                             PhotoFileName = "fuji.jpg",
                             Preco = 0.59f,
-                            Stock = 150
+                            Stock = 150,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/fuji.jpg"
                         },
                         new
                         {
@@ -382,7 +389,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Kiwi",
                             PhotoFileName = "kiwi.jpg",
                             Preco = 3.99f,
-                            Stock = 300
+                            Stock = 300,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/kiwi.jpg"
                         },
                         new
                         {
@@ -394,7 +402,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Limão",
                             PhotoFileName = "limao-siciliano.jpg",
                             Preco = 0.99f,
-                            Stock = 150
+                            Stock = 150,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/limao-siciliano.jpg"
                         },
                         new
                         {
@@ -406,7 +415,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Melão",
                             PhotoFileName = "melao.jpg",
                             Preco = 1.99f,
-                            Stock = 200
+                            Stock = 200,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/melao.jpg"
                         },
                         new
                         {
@@ -418,7 +428,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Peras",
                             PhotoFileName = "peras.jpg",
                             Preco = 0.99f,
-                            Stock = 200
+                            Stock = 200,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/peras.jpg"
                         },
                         new
                         {
@@ -430,7 +441,8 @@ namespace Projeto_Rumos.Migrations
                             Nome = "Uva",
                             PhotoFileName = "uvas.jpg",
                             Preco = 1.29f,
-                            Stock = 300
+                            Stock = 300,
+                            Url = "https://ac2020storage.blob.core.windows.net/joaomachado/uvas.jpg"
                         });
                 });
 
@@ -472,6 +484,34 @@ namespace Projeto_Rumos.Migrations
                     b.HasKey("UsuarioId");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("Models_Class.Contacto", b =>
+                {
+                    b.Property<int>("ContactoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ContactoTelefonico")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mensagem")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("ContactoId");
+
+                    b.ToTable("Contactos");
                 });
 
             modelBuilder.Entity("Models_Class.Pagamento", b =>
