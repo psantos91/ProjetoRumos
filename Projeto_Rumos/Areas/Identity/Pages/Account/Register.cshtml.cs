@@ -15,7 +15,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Projeto_Rumos.Areas.Identity.Pages.Account.UserData;
 using Models;
-using WebApplication2.Data;
+using Projeto_Rumos.ApiConector;
+using WebApiFrutaria.DataContext;
 using Projeto_Rumos.Models;
 
 namespace Projeto_Rumos.Areas.Identity.Pages.Account
@@ -27,20 +28,23 @@ namespace Projeto_Rumos.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ContextApplication _dbContext;
+        private readonly ApiConnector _apiConnector;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            ApplicationDbContext dbContext)
+            ContextApplication dbContext,
+            ApiConnector apiConnector)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _dbContext = dbContext;
+            _apiConnector = apiConnector;
         }
 
         [BindProperty]
@@ -91,22 +95,21 @@ namespace Projeto_Rumos.Areas.Identity.Pages.Account
                 try
                 {
                     //REGISTO DE UM NOVO USUARIO NA CLASS USUARIO, PARA USO NO FINALIZAR DA ENCOMENDA.
-                    var Usuario = new Usuario
+                    Usuario Usuario = new Usuario
                     {
                         Username = Input.UserName,
-                        Password = Input.Password,
                         Morada = Input.Morada,
                         DataNascimento = Input.DataNascimento,
                         Contacto = Input.PhoneNumber,
                         Email = Input.Email,
                     };
 
-                    _dbContext.Usuarios.Add(Usuario);
+                    _apiConnector.Post("usuario", Usuario.ToString());
                     _dbContext.SaveChanges();
 
                     //AQUI É TAMBÉM REGISTADO UM USUSARIO MAS PARA A CLASS REGISTER, CRIADA AUTOMATICAMENTE PELO IDENTITY PARA EFEITOS
                     //DE LOGIN.
-                    var user = new ApplicationUser { UserName = Input.UserName, Email = Input.Email, PhoneNumber = Input.PhoneNumber, SobreNome = Input.SobreNome, StreetAddress = Input.Morada, DateOfBirth = Input.DataNascimento };
+                    var user = new ApplicationUser { UserName = Input.UserName, Email = Input.Email, PhoneNumber = Input.PhoneNumber, Surname = Input.SobreNome, StreetAddress = Input.Morada, DateOfBirth = Input.DataNascimento };
                     var result = await _userManager.CreateAsync(user, Input.Password);
                     if (result.Succeeded)
                     {
@@ -138,9 +141,12 @@ namespace Projeto_Rumos.Areas.Identity.Pages.Account
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
                 }
-                catch (Exception)
+                catch (Exception msg)
                 {
-                    return Page();
+                    ErrorViewModel errorViewModel = new ErrorViewModel();
+                    errorViewModel.RequestId = msg.Message;
+
+                    return RedirectToAction("_Error", errorViewModel);
                 }
             }
             // If we got this far, something failed, redisplay form

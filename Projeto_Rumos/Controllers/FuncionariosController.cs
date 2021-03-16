@@ -1,31 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models_Class.Enum;
+using Newtonsoft.Json;
+using Projeto_Rumos.ApiConector;
 using Projeto_Rumos.Models;
-using WebApplication2.Data;
+using WebApiFrutaria.DataContext;
 
 namespace Projeto_Rumos.Controllers
 {
     public class FuncionariosController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ContextApplication _context;
+        private readonly ApiConnector _apiConnector;
 
-        public FuncionariosController(ApplicationDbContext context)
+        public FuncionariosController(ContextApplication context, ApiConnector apiConnector)
         {
             _context = context;
+            _apiConnector = apiConnector;
         }
 
         // GET: Funcionarios
         //MOSTRA A LISTA DE USUARIOS NA BASE DE DADOS
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Funcionarios.ToListAsync());
+            var response = _apiConnector.Get("Funcionarios");
+            var result = JsonConvert.DeserializeObject<List<Funcionario>>(response);
+            return View(result.ToList());
         }
 
         //ACTION PARA A VIEW DE LOGIN DE FUNCIONARIO.
@@ -49,13 +56,18 @@ namespace Projeto_Rumos.Controllers
         {
             try
             {
-                var Funcionario = _context.Funcionarios.FirstOrDefault(func => func.Email == email && func.Password == password);
+                var response = _apiConnector.Get("Funcionarios");
+                var result = JsonConvert.DeserializeObject<List<Funcionario>>(response);
+                //METODO DECLARADO A BAIXO
+                var resultPass = ComputeHash(password, new SHA256CryptoServiceProvider());
+
+                var Funcionario = result.FirstOrDefault(func => func.Email == email && func.Password == resultPass);
                 if (Funcionario == null)
                 {
                     ViewBag.message = "Ups !! Dados incorrectos!!!";
                     return View();
                 }
-                else if (Funcionario.Nome == nome && Funcionario.Email == email && Funcionario.Password == password)
+                else if (Funcionario.Nome == nome && Funcionario.Email == email && Funcionario.Password == resultPass)
                 {
                     return RedirectToAction("GestaoProduto","Produtos");
                 }
@@ -66,76 +78,95 @@ namespace Projeto_Rumos.Controllers
             }
             catch (Exception msg)
             {
-
                 ErrorViewModel errorViewModel = new ErrorViewModel();
                 errorViewModel.RequestId = msg.Message;
-
                 return View("_Error", errorViewModel);
             }
         }
 
         // GET: Funcionarios/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null)
+            if (id.Equals(null))
             {
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (funcionario == null)
+            var funcionario = _apiConnector.GetById("Funcionarios", id);
+            var result = JsonConvert.DeserializeObject<Funcionario>(funcionario);
+            if (result == null)
             {
                 return NotFound();
             }
-
-            return View(funcionario);
+            return View(result);
         }
 
         // GET: Funcionarios/Create
         public IActionResult CreateFuncionario()
         {
+            List<Enum> listaDeCargos = new List<Enum>();
+
+            listaDeCargos.Add(EnumCargo.Administrador);
+            listaDeCargos.Add(EnumCargo.Empregado);
+            listaDeCargos.Add(EnumCargo.Primeiro_Encarregado);
+            listaDeCargos.Add(EnumCargo.Segundo_Encarregado);
+
+            ViewBag.ListaDeCargos = listaDeCargos;
             return View();
         }
 
-        // POST: Funcionarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFuncionario([Bind("Id,Nome,Email,Password,NumeroDeTrabalhador,Cargo")] Funcionario funcionario)
+        public IActionResult CreateFuncionario([Bind("Id,Nome,Email,Password,NumeroDeTrabalhador,Cargo")] Funcionario funcionario)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(funcionario);
-                await _context.SaveChangesAsync();
+                switch (funcionario.Cargo)
+                {
+                    case "Administrador":
+                        funcionario.Cargo = EnumCargo.Administrador.ToString();
+                    break;
+                    case "Empregado":
+                        funcionario.Cargo = EnumCargo.Empregado.ToString();
+                        break;
+                    case "Primeiro_Encarregado":
+                        funcionario.Cargo = EnumCargo.Primeiro_Encarregado.ToString();
+                        break;
+                    case "Segundo_Encarregado":
+                        funcionario.Cargo = EnumCargo.Segundo_Encarregado.ToString();
+                        break;
+
+                }
+                var senha = funcionario.Password;
+                var senhaEncriptada = ComputeHash(senha, new SHA256CryptoServiceProvider());
+                funcionario.Password = senhaEncriptada;
+                var funcionarioJson = JsonConvert.SerializeObject(funcionario);
+                _apiConnector.Post("Funcionarios", funcionarioJson);
                 return RedirectToAction(nameof(Index));
             }
             return View(funcionario);
         }
 
         // GET: Funcionarios/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
+            if (id.Equals(null))
             {
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios.FindAsync(id);
-            if (funcionario == null)
+            var funcionario = _apiConnector.GetById("Funcionarios", id);
+            var result = JsonConvert.DeserializeObject<Funcionario>(funcionario);
+            if (result == null)
             {
                 return NotFound();
             }
-            return View(funcionario);
+            return View(result);
         }
 
-        // POST: Funcionarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Email,Password,NumeroDeTrabalhador,Cargo")] Funcionario funcionario)
+        public IActionResult Edit(int id, [Bind("Id,Nome,Email,Password,NumeroDeTrabalhador,Cargo")] Funcionario funcionario)
         {
             if (id != funcionario.Id)
             {
@@ -146,8 +177,10 @@ namespace Projeto_Rumos.Controllers
             {
                 try
                 {
-                    _context.Update(funcionario);
-                    await _context.SaveChangesAsync();
+                    var senha = funcionario.Password;
+                    var senhaEncriptada = ComputeHash(senha, new SHA256CryptoServiceProvider());
+                    funcionario.Password = senhaEncriptada;
+                    _apiConnector.Update("Funcionarios", funcionario.ToString());
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -166,37 +199,42 @@ namespace Projeto_Rumos.Controllers
         }
 
         // GET: Funcionarios/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
+            if (id.Equals(null))
             {
                 return NotFound();
             }
 
-            var funcionario = await _context.Funcionarios
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (funcionario == null)
+            var funcionario = _apiConnector.GetById("Funcionarios", id);
+            var result = JsonConvert.DeserializeObject<Funcionario>(funcionario);
+            if (result == null)
             {
                 return NotFound();
             }
-
-            return View(funcionario);
+            return View(result);
         }
 
         // POST: Funcionarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var funcionario = await _context.Funcionarios.FindAsync(id);
-            _context.Funcionarios.Remove(funcionario);
-            await _context.SaveChangesAsync();
+            _apiConnector.Delete("Funcionarios", id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool FuncionarioExists(int id)
         {
-            return _context.Funcionarios.Any(e => e.Id == id);
+            return bool.Parse(_apiConnector.GetById("Funcionarios",id));
+        }
+
+        //METODO PARA CRIPTAR A SENHA
+        private string ComputeHash(string input, SHA256CryptoServiceProvider algotithm)
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+            byte[] hashBytes = algotithm.ComputeHash(inputBytes);
+            return BitConverter.ToString(hashBytes);
         }
     }
 }

@@ -1,127 +1,131 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Models_Class;
 using Projeto_Rumos.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using WebApplication2.Data;
-using Microsoft.AspNetCore.Http;
+using Models;
+using Projeto_Rumos.ApiConector;
+using Newtonsoft.Json;
+using WebApiFrutaria.DataContext;
 
 namespace Projeto_Rumos.Controllers
 {
     public class CarrinhoComprasController : Controller
     {
-        private ApplicationDbContext _dbContext;
+        private ContextApplication _dbContext;
         private readonly AuthenticatedUser _user;
-        readonly CarrinhoCompra carrinhoCompra = new CarrinhoCompra();
+        private readonly DadosStorage _dados;
+        //CLASS PARA FAZER A LIGAÇÃO A API(COMTEM OS METODOS GET, PUT, POST, DELETE)
+        private readonly ApiConnector _apiConnector;
 
-        public CarrinhoComprasController(ApplicationDbContext dbContext, AuthenticatedUser user)
+        public CarrinhoComprasController(ContextApplication dbContext, AuthenticatedUser user, DadosStorage dados, ApiConnector apiConnector)
         {
             _dbContext = dbContext;
             _user = user;
+            _dados = dados;
+            _apiConnector = apiConnector;
         }
         //ACTION CASO APANHEM ALGUMA EXCEÇÃO ESTÃO A RETORNA A VIEW "_ERROR"
         // ACTION PARA CRIAR UM PRODUTO NO CARRINHO DE COMPRAS E ASSOCIAR UM ID DE LOGIN E UM ID DE CARRINHO
         // AQUI FAZ TAMBÉM A GESTÁO DE STOCK, CASO SEJA ADICIONADO UM PRODUTO AO CARRINHO É RETIRADO SO STOCK DESSE PRODUTO.
         // CASO SEJA REPOSTO, O STOCK TAMBÉM É REPOSTO.
         // RETORNA A MENSAGEM JASON PARA ACTIVAR O POPUP DA VISTA PARTIAL "_PopupPartialView.cshtml"
-        [HttpPost]
-        public IActionResult Create([FromBody] int id)
-        {
 
-            //var user = _user;
+        [HttpPost]
+        public IActionResult Create([FromBody] int[] dados)
+        {
             try
             {
-                var prod = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-                //var exist = _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).Where(x => x.ProdutoId == prod.ProdutoId && x.UsuarioId == Guid.Parse(user.Id)).Any();
+                if (dados == null)
+                {
+                    var notData = new { notData = true };
+                    return Json(notData);
+                }
 
-                //ESTE CODIGO É PARA REMOVER UNIDADE DO STOCK
-                //--------------------------------------------
-                var NovoStockProduto = prod.Stock - 1;
-                Produto produtoActualizado = prod;
-                produtoActualizado.Stock = NovoStockProduto;
+                var id = dados[0];
+                var qta = dados[1];
 
-                _dbContext.Update(produtoActualizado);
-                _dbContext.SaveChanges();
-                //--------------------------------------------
+                var user = _user;
+                if (user.UserName != null)
+                {
+                    var prod = _apiConnector.GetById("Produtos", id);
+                    var Produto = JsonConvert.DeserializeObject<Produto>(prod);
+                    //metodo da class "dadosStorage"(ESTA CLASS FAZ A LIGAÇÃO AO AZURE STORAGE)
+                    _dados.InserirDados(Produto, user, qta);
 
-                //if (exist == false)
-                //{
-                carrinhoCompra.Produto = prod;
-                //carrinhoCompra.UsuarioId = Guid.Parse(user.Id);
+                    //ESTE CODIGO É PARA REMOVER UNIDADE DO STOCK(FAZ A LIGAÇÃO A API)
+                    ////--------------------------------------------
+                    var NovoStockProduto = Produto.Stock - qta;
+                    Produto produtoActualizado = Produto;
+                    produtoActualizado.Stock = NovoStockProduto;
 
-                _dbContext.Add(carrinhoCompra);
-                _dbContext.SaveChanges();
-
-                var sucesso = new { Sucesso = true, };
-                return Json(sucesso);
-                //}
-                //else
-                //{
-                //    var sucesso = new { Sucesso = false };
-                //    return Json(sucesso);
-                //}
+                    var productSerialize = JsonConvert.SerializeObject(produtoActualizado);
+                    var result = _apiConnector.Update("Produtos", productSerialize);
+                   
+                    ////--------------------------------------------///
+                    if (result != null)
+                    {
+                        var sucesso = new { Sucesso = true, };
+                        return Json(sucesso);
+                    }
+                    else
+                    {
+                        var necLogin = new { necLogin = true };
+                        return Json(necLogin);
+                    }
+                }
+                else
+                {
+                    var necessarioLogin = new { necessarioLogin = true };
+                    return Json(necessarioLogin);
+                }
             }
             catch (Exception msg)
             {
-                var necLogin = new { necLogin = msg.Message };
-                return Json(necLogin);
+                ErrorViewModel errorViewModel = new ErrorViewModel();
+                errorViewModel.RequestId = msg.Message;
+                return View("_Error", errorViewModel);
             }
         }
-        //else
-        //{
-        //    var necLogin = new { necLogin = true };
-        //    return Json(necLogin);
-
-
-
         // ACTION PARA CONSULTAR O DETALHE DOS ARTIGOS ADICIONADOS AO CARRINHO DE COMPRAS
-
         public IActionResult Details(int id)
         {
             try
             {
-                var produtoCarrinho = _dbContext.Produtos.FirstOrDefault(m => m.ProdutoId == id);
-
-                return View(produtoCarrinho);
+                var produtoCarrinho = _apiConnector.GetById("Produtos", id);
+                var result = JsonConvert.DeserializeObject<Produto>(produtoCarrinho);
+                return View(result);
             }
             catch (Exception msg)
             {
                 ErrorViewModel errorViewModel = new ErrorViewModel();
                 errorViewModel.RequestId = msg.Message;
-
                 return View("_Error", errorViewModel);
             }
         }
-
         // ACTION PARA CONFIRMAR O DELETE DE UM ARTIGO DO CARRINHO DE COMPRAS
-
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
             try
             {
-                if (id == null)
+                if (id.Equals(null))
                 {
                     return NotFound();
                 }
-
-                var produto = await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).FirstOrDefaultAsync(m => m.Produto.ProdutoId == id);
-                if (produto == null)
+                var produtoCarrinho = _apiConnector.GetById("Produtos", id);
+                var result = JsonConvert.DeserializeObject<Produto>(produtoCarrinho);
+                if (result == null)
                 {
                     return NotFound();
                 }
-
-                return View(produto);
+                return View(result);
             }
             catch (Exception msg)
             {
                 ErrorViewModel errorViewModel = new ErrorViewModel();
                 errorViewModel.RequestId = msg.Message;
-
                 return View("_Error", errorViewModel);
             }
         }
@@ -132,51 +136,78 @@ namespace Projeto_Rumos.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var quantidade = 0;
             try
             {
-                var produto = await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).FirstOrDefaultAsync(p => p.ProdutoId == id);
-                _dbContext.CarrinhoCompras.Remove(produto);
+                var user = _user;
+                var produtoCarrinho = _apiConnector.GetById("Produtos", id);
+                var result = JsonConvert.DeserializeObject<Produto>(produtoCarrinho);
+                var listForTakeQtaProdRemove = _dados.ListaDeCliente(user);
+                await _dados.ApagarProdutoDaListaAsync(result, user);
 
+                foreach (var item in listForTakeQtaProdRemove)
+                {
+                    if(item.Nome == result.Nome)
+                    {
+                        quantidade = item.Quantidade;
+                    }
+                }
                 //ESTE CODIGO SERVE PARA REPOR O STOCK
                 //-------------------------------------------------------------------
-
-                var prod = _dbContext.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-                var NovoStockProduto = prod.Stock + 1;
-                Produto produtoActualizado = prod;
+                var NovoStockProduto = result.Stock + quantidade;
+                Produto produtoActualizado = result;
                 produtoActualizado.Stock = NovoStockProduto;
 
-                _dbContext.Update(produtoActualizado);
-                _dbContext.SaveChanges();
-
+                var productSerialize = JsonConvert.SerializeObject(produtoActualizado);
+                var response = _apiConnector.Update("Produtos", productSerialize);
+                if (response == null)
+                {
+                    ErrorViewModel errorViewModel = new ErrorViewModel();
+                    errorViewModel.RequestId = "Erro ao actualizar produto";
+                    return View("_Error", errorViewModel);
+                }
                 //--------------------------------------------------------------------
-                await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Carrinho));
             }
             catch (Exception msg)
             {
                 ErrorViewModel errorViewModel = new ErrorViewModel();
                 errorViewModel.RequestId = msg.Message;
-
                 return View("_Error", errorViewModel);
             }
         }
 
         // ACTION PARA ABRIR O CARRINHO DE COMPRAS, ESTA VIEW SO ABRE SE TIVER LOGIN FEITO, POIS CADA USUARIO TEM ACESSO SOMENTE
         //AO SEU CARRINHO.
-
-        public async Task<IActionResult> Carrinho()
+        public IActionResult Carrinho()
         {
             try
             {
-                //var user = _user;
-                //return View(await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).Where(x => x.UsuarioId == Guid.Parse(user.Id)).ToListAsync());
-                return View(await _dbContext.CarrinhoCompras.Include(carrinho => carrinho.Produto).ToListAsync());
+                var userId = _dbContext.Users.ToList();
+                if (_user.UserName != null)
+                {
+                    List<ListaDeProdCliente> listaDeProd = _dados.ListaDeCliente(_user);
+                    var total = 0.0;
+                    foreach (var prod in listaDeProd)
+                    {
+                        var totalProd = prod.Preco * prod.Quantidade;
+                        total += totalProd;
+                    }
+
+                    ViewBag.total = total.ToString("F2");
+                    return View(listaDeProd);
+                }
+                else
+                {
+                    ErrorViewModel errorViewModel = new ErrorViewModel();
+                    errorViewModel.RequestId = "Erro, necessário efetuar login para vermos a tua lista de compras. Obrigado";
+                    return View("_Error", errorViewModel);
+                }
             }
             catch (Exception msg)
             {
                 ErrorViewModel errorViewModel = new ErrorViewModel();
                 errorViewModel.RequestId = msg.Message;
-
                 return View("_Error", errorViewModel);
             }
         }

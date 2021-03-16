@@ -14,7 +14,9 @@
     <title>@ViewData["Title"] - Projeto_Rumos</title>
     <link rel="shortcut icon" type="image/ico" href="~/img/Imagens_site/frut2-semFundo.png">
 </head>
-<body>
+<body style="
+    font-family: 'FontAwesome';
+">
     <header>
         @*VISTA PARCIAL DE LOGIN MOSTRA OS DADOS DE USUARIO QUANDO FAZ LOGIN*@
         @await Html.PartialAsync("_LoginPartial.cshtml")

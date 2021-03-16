@@ -38,6 +38,11 @@ function setTwoNumberDecimal(event) {
 
 //função para enviar o produto para o carrinho e retornar uma mensagem TRUE or FALSE e chamar o pop #caixa(_PopupPartialView.cshtml)
 function encomendar(id) {
+
+    var qta = document.getElementById(`${id}`);
+    var res = parseInt(qta.value);
+
+    var dados = [id, res]
     //Enviar para o servidor:
     fetch("/CarrinhoCompras/Create",
         {
@@ -46,7 +51,8 @@ function encomendar(id) {
                 'Content-Type': 'application/json'
             },
             method: "POST",
-            body: JSON.stringify(id)
+
+            body: JSON.stringify(dados)  
         }
     )
         .then(resposta => resposta.json()) // Esta instrução dá erro se a resposta do server não for json
@@ -61,8 +67,11 @@ function apresentar(dados) {
     else if (dados.sucesso == false) {
         alert("Produto já está no carrinho...");
     }
-    else if (dados.necLogin == true) {
-        alert("Necessário login para adicionar produto");
+    else if (dados.notData == true) {
+        alert("Necessário uma quantidade do produto");
+    }
+    else if (dados.necessarioLogin == true) {
+        alert("Necessário efectuar login");
     }
 }
 
